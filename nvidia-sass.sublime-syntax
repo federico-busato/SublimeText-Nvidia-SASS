@@ -1,0 +1,145 @@
+%YAML 1.2
+---
+name: SASS
+file_extensions: [sass]
+scope: source.sass
+
+contexts:
+  prototype:
+    - include: comments
+
+  main:
+    - include: fp64_op
+    - include: fp32_op
+    - include: fp16_op
+    - include: integer_op
+    - include: logic_op
+    - include: conversion_op
+    - include: movement_op
+    - include: predicate_op
+    - include: mma_op
+
+    - include: memory_op
+    - include: memory_space
+    - include: tex_op
+    - include: surface_op
+    - include: control_op
+    - include: uniform_op
+
+    - include: number
+    - include: special_reg
+    - include: miscellaneous_op
+    - include: predicate
+    - include: label
+    - include: special_keyword
+
+  fp64_op:
+    - match: \b(DADD|DFMA|DMUL)\b
+      scope: storage.type
+
+  fp32_op:
+    - match: \b(FADD(\.FTZ)?|FADD32I|FCHK|FFMA32I|FFMA|FMNMX(\.FTZ)?|FMUL|FMUL32I|FSEL|FSET|(DSETP|FSETP|HSETP2)(\.MIN|\.MAX|\.NEU|\.EQ|\.GT|\.LT|\.GEU)(\.FTZ)?(\.AND|\.OR)|FSWZADD|MUFU|RRO)\b
+      scope: storage.type
+
+  fp16_op:
+    - match: \b(HADD2|HADD2_32I|HFMA2|HFMA2_32I|HMUL2|HMUL2_32I|HSET2)\b
+      scope: storage.type
+
+  integer_op:
+    - match: \b(IABS|IADD|IADD3(\.X)?|IADD32I|IDP|IDP4A|ICMP|IMADSP|IMNMX|IMUL|IMUL32I|ISCADD|ISAD|ISCADD32I|ISET|XMAD)\b
+      scope: storage.type
+    - match: \b(ISETP\.(NE|GE|GT|LT|EQ|LE)(\.U32)?\.(AND|OR))\b
+      scope: storage.type
+    - match: \b(U)?IMAD(\.WIDE|\.SHL|\.MOV)?(\.X)?(\.U32)?\b
+      scope: storage.type
+
+  logic_op:
+    - match: \b(BFE|BFI|BMSK|BREV|FLO(\.U32)?|LOP|LOP3(\.LUT)?|LOP32I|POPC|(U)?SHF\.(L|R)(\.U32|\.S32)?(\.HI|\.LO)?|SHL|SHR|VABSDIFF|VABSDIFF4)\b
+      scope: storage.type
+    - match: \bLEA(\.HI|\.LO)?(\.X)?(\.SX32)?\b
+      scope: storage.type
+
+  conversion_op:
+    - match: \b(F2F|F2I|I2F|I2I|I2IP|FRND)\b
+      scope: storage.type
+
+  movement_op:
+    - match: \b(MOV|MOV32I|MOVM|PRMT|SEL|(U)?SGXT(\.U32)?)\b
+      scope: storage.type
+
+    - match: \bSHFL\.(UP|DOWN|IDX|BFLY)\b
+      scope: variable.language
+
+  predicate_op:
+    - match: \b(CSET|CSETP|PSET|PLOP3(\.LUT)|PSETP|P2R|R2P)\b
+      scope: storage.type
+
+  mma_op:
+    - match: \b(BMMA|IMMA|HMMA)\b
+      scope: storage.type
+  #-----------------------------------------------------------------------------
+
+  memory_op:
+    - match: \b(LDSLK|STSCUL|(U)?LDC(\.64|\.128)?|LDSM|MATCH|QSPC|ATOMS|ATOMG|CCTL|CCTLL|ERRBAR|MEMBAR(\.SC)?(\.CTA)?|CCTLT)\b
+      scope: keyword.operator
+    - match: \b(RED|ATOM)\.E\.ADD\.STRONG\.GPU\b
+      scope: keyword.operator
+      # constant
+    - match: \b[a-z]+\[.+\]\[.+\]
+      scope: string
+    - match: \b(LD|ST|LDG|LDL|STL|LDS|STS|STG)(\.E|\.U)?(\.U8|\.S8|\.U16|\.S16|\.32|\.64|\.128|\.U\.128)?(\.CONSTANT)?(\.SYS|\.STRONG)?(\.GPU)?\b
+      scope: keyword.operator
+
+  tex_op:
+    - match: \b(TEX|TLD|TLD4|TMML|TXD|TXQ|TLD4S|TLDS)\b
+      scope: keyword.operator
+
+  surface_op:
+    - match: \b(SUCLAMP|SUBFM|SULDGA|SUSTGA|SUEAU|SUATOM|SULD|SURED|SUST)\b
+      scope: storage.type
+
+  control_op:
+    - match: \b(SSY|BMOV(\.32)?(\.CLEAR)?|BPT|BRA(\.DIV)?|BREAK|BRX|BRXU|BSSY|BSYNC|CALL(\.REL)?(\.NOINC)?|EXIT|PEXIT|JMP|JMX|JMXU|KILL|NANOSLEEP|RET(\.REL)?(\.NODEC)?|RPCMOV|RTT|WARPSYNC|YIELD|CAL|JCAL|PRET|BRK|PBK|CONT|PCNT)\b
+      scope: entity.name
+
+  uniform_op:
+    - match: \b(R2UR|S2UR|UBMSK|UBREV|UCLEA|UISETP|ULEA|ULOP|ULOP3|ULOP32I|UMOV|UP2UR|UPLOP3|UPOPC|UPRMT|UPSETP|UR2UP|USEL|USHL|USHR|VOTEU)\b
+      scope: storage.type
+  #-----------------------------------------------------------------------------
+
+  miscellaneous_op:
+    - match: \b(B2R|BAR(\.SYNC)?|CS2R|CSMTEST|DEPBAR|GETLMEMBASE|LEPC|NOP|PMTRIG|R2B|S2R|SETCTAID|SETLMEMBASE|VOTE\.(ANY|ALL)|VOTE_VTG)\b
+      scope: variable.language
+
+  predicate:
+    - match: '@(!)?P[0-9]\b'
+      scope: entity.name
+
+  special_reg:
+    - match: \b((SR_TID|SR_CTAID)\.(X|Y|Z)|SR_LANEID|SR_(GT|LT|GE|LE|EQ)MASK)\b
+      scope: string
+
+  number:
+    - match: \-[0-9]+\b
+      scope: constant.numeric
+    - match: \b([0-9]+|0x[0-9a-f]+)\b
+      scope: constant.numeric
+
+  label:
+    - match: \.L_[0-9]+
+      scope: invalid
+
+  special_keyword:
+    - match: \.section\b
+      scope: invalid.deprecated
+    - match: \.(sectionflags|type|weak|size|other|headerflags|elftype|align|sectioninfo|global|version|target|address_size|maxntid|file)\b
+      scope: entity.name.function
+
+  comments:
+    - match: '//'
+      scope: punctuation.definition.comment.example-c
+      push:
+        # This is an anonymous context push for brevity.
+        - meta_scope: comment.line.double-slash.example-c
+        - match: $\n?
+          pop: true
